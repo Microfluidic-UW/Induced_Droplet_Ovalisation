@@ -1,0 +1,9 @@
+{
+    "video_path": "data/video/video_name",
+    "model_path": "data/model/YOLOv11m-seg_27_01_2025.pt",
+    "image_output_folder": "data/image_output_folder/",
+    "image_output_folder_AI": "data/image_output_folder_AI",
+    "roi": [0, 20, 400, 200],
+    "area_treshold": 10000,
+    "csv_results_files": "analysis/raw_data/"
+}
