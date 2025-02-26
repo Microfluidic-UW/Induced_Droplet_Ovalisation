@@ -68,3 +68,7 @@ class ImageProcessor:
         df = pd.DataFrame(results)
         df.to_csv(csv_path, index=False)
         print(f"Results saved to {csv_path}")
+    
+    def create_output_folder(self) -> None:
+        if not os.path.exists(self.config['image_output_folder_AI']):
+            os.makedirs(self.config['image_output_folder_AI'])
