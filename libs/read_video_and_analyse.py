@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 
 from libs.read_config import ReadConfig
+from libs.read_and_use_model import ImageProcessor
 from typing import Tuple
 
 class ReadVideoAndAnalyse:
@@ -20,6 +21,7 @@ class ReadVideoAndAnalyse:
         self.roi = self.config['roi']
         self.area_threshold = self.config['area_treshold']
         self.vid_name = os.path.basename(self.video_path).split('.')[0]
+        self.no_images_save = self.config['no._images_save']
         self.cap = None
         self.backSub = cv2.createBackgroundSubtractorMOG2()
         self.particle_data = pd.DataFrame(columns=['Frame', 'Time (ms)', 'Area', 'Perimeter', 'Aspect Ratio', 'Circularity',
@@ -88,6 +90,7 @@ class ReadVideoAndAnalyse:
         print(f"Saved: {frame_filename}")
 
     def analyze_video(self) -> None:
+        model = ImageProcessor(self.config['model_path'], self.config_path)
         while self.cap.isOpened():
             ret, frame = self.cap.read()
             if not ret:
@@ -99,12 +102,20 @@ class ReadVideoAndAnalyse:
             if new_data:
                 self.particle_data = pd.concat([self.particle_data, pd.DataFrame(new_data)], ignore_index=True)
             if droplet_detected:
-                self.save_frame(frame)
+                if self.config['save_all_images']:
+                    self.save_frame(frame)
+                elif self.no_images_save != 0:
+                    self.save_frame(frame)
+                    self.no_images_save -= 1
             self.frame_idx += 1
-            cv2.imshow('Frame', frame_roi)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-        self.particle_data.to_csv(f'data/data_to_analysis/data{self.vid_name}.csv', index=False)
+            results = model.process_image(frame=frame)
+            if self.config['show_video']:
+                cv2.imshow('Frame', frame_roi)
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+            
+        self.particle_data.to_csv(self.config['csv_results_files'] + f'raw_{self.vid_name}', index=False)
+        model.save_results_to_csv(results, self.config['csv_results_files'] + f'AI_{self.vid_name}')
         self.cap.release()
         cv2.destroyAllWindows()
 

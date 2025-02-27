@@ -5,5 +5,8 @@
     "image_output_folder_AI": "data/image_output_folder_AI",
     "roi": [0, 20, 400, 200],
     "area_treshold": 10000,
-    "csv_results_files": "analysis/raw_data/"
+    "csv_results_files": "analysis/raw_data/",
+    "save_all_images": false,
+    "no._images_save": 30,
+    "show_video": true
 }

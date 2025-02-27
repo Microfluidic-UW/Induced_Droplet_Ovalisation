@@ -18,10 +18,10 @@ class ImageProcessor:
         self.config = self.config.read_config()
         self.model = YOLO(model_path)
 
-    def process_image(self):
-        image = cv2.imread(self.config['image_output_folder'])
+    def process_image(self, frame):
+        image = cv2.imread(frame)
         if image is None:
-            raise ValueError(f"Cannot load image: {self.config['image_output_folder']}")
+            raise ValueError(f"Cannot load image: {frame}")
 
         results = self.model(image)
         output = []
@@ -57,14 +57,13 @@ class ImageProcessor:
             cv2.putText(image, f'{class_name} {confidence:.2f}', (int(x_min), int(y_min) - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-        if not os.path.exists(self.config['image_output_folder_AI']):
-            os.makedirs(self.config['image_output_folder_AI'])
+        self.create_output_folder()
         output_image_path = os.path.join(self.config['image_output_folder_AI'], os.path.basename(self.config['image_output_folder']))
         cv2.imwrite(output_image_path, image)
 
         return output
 
-    def save_results_to_csv(self, results, csv_path):
+    def save_results_to_csv(self, results:pd.DataFrame, csv_path:str) -> None:
         df = pd.DataFrame(results)
         df.to_csv(csv_path, index=False)
         print(f"Results saved to {csv_path}")
