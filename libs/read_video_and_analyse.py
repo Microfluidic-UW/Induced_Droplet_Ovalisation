@@ -37,6 +37,9 @@ class ReadVideoAndAnalyse:
     def create_output_folder(self) -> None:
         if not os.path.exists(self.output_folder):
             os.makedirs(self.output_folder)
+    
+    def create_output_folder_for_video(self) -> None:
+        pass
 
     def initialize_video(self) -> None:
         self.cap = cv2.VideoCapture(self.video_path)
@@ -135,7 +138,6 @@ class ReadVideoAndAnalyse:
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
 
-        # Save the data to CSV after the loop
         output_folder = self.config['csv_results_files']
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
@@ -143,10 +145,8 @@ class ReadVideoAndAnalyse:
         # Save the particle data to CSV
         self.particle_data.to_csv(os.path.join(output_folder, f'raw_{self.vid_name}.csv'), index=False)
 
-        # Check if there are any AI results to save, then save to CSV
-        if results_AI:  # Check if results_AI is not empty
-            # Concatenate all results (which should now be DataFrames) and save
-            ai_data = pd.concat(results_AI, ignore_index=True)  # This will concatenate DataFrames
+        if results_AI:
+            ai_data = pd.concat(results_AI, ignore_index=True)
             model.save_results_to_csv(ai_data, os.path.join(output_folder, f'raw_AI_{self.vid_name}.csv'))
         else:
             print("No AI results to save.")
