@@ -1,0 +1,6 @@
+path: training_data_set
+train: training_data_set/train/images
+val: training_data_set/val/images
+nc: 2
+
+names: ['proteolytic, 'non-proteolytic']
