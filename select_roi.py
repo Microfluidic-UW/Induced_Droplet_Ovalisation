@@ -32,7 +32,7 @@ class VideoROISelector:
         return x, y, w, h
 
 if __name__ == "__main__":
-    video_path = "video/7.5_rotated_15.mp4"  # Adjust to your actual path
+    video_path = "path_to_video"  # Adjust to your actual path
     roi_selector = VideoROISelector(video_path)
     roi_coords = roi_selector.select_roi()
 
